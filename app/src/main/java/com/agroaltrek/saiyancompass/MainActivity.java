@@ -75,6 +75,11 @@ public final class MainActivity extends Activity implements SensorEventListener,
         else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) { target = magnetic; hasMagnetic = true; }
         else return;
         for (int i = 0; i < 3; i++) target[i] += alpha * (event.values[i] - target[i]);
+        if (hasGravity) {
+            float pitch = (float) Math.toDegrees(Math.atan2(-gravity[0], Math.sqrt(gravity[1] * gravity[1] + gravity[2] * gravity[2])));
+            float roll = (float) Math.toDegrees(Math.atan2(gravity[1], gravity[2]));
+            compass.setTilt(pitch, roll);
+        }
         if (!hasGravity || !hasMagnetic) return;
         float[] rotation = new float[9];
         float[] orientation = new float[3];

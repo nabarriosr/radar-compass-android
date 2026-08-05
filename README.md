@@ -2,6 +2,8 @@
 
 Brújula Android nativa y liviana. Combina acelerómetro y magnetómetro para compensar la inclinación del equipo, y usa la ubicación GPS para corregir la declinación magnética y apuntar al norte verdadero.
 
+La interfaz 3D incorpora una burbuja de nivel que muestra `pitch` y `roll`: al quedar centrada y verde, el teléfono está aproximadamente paralelo al plano tangente local. El fondo alienígena, el radar energético y sus nodos son ilustraciones originales dibujadas directamente con Canvas, sin imágenes pesadas.
+
 ## Requisitos
 
 - Android 6.0 o posterior.
