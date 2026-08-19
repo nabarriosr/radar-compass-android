@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#090D16"
+    android:orientation="vertical">
+
+    <com.orbitalcompass.app.CompassView
+        android:id="@+id/compass"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/privacy_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#090D16"
+        android:gravity="center"
+        android:paddingTop="6dp"
+        android:paddingBottom="4dp"
+        android:text="Opciones de anuncios"
+        android:textColor="#A4FFC2"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/ad_container"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#12202A">
+
+        <TextView
+            android:id="@+id/ad_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Publicidad"
+            android:textColor="#6FA8A0"
+            android:textSize="12sp" />
+    </FrameLayout>
+</LinearLayout>

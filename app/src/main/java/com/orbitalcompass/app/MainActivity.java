@@ -1,4 +1,4 @@
-package com.agroaltrek.saiyancompass;
+package com.orbitalcompass.app;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,6 +14,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 public final class MainActivity extends Activity implements SensorEventListener, LocationListener {
     private static final int LOCATION_REQUEST = 42;
@@ -25,23 +27,30 @@ public final class MainActivity extends Activity implements SensorEventListener,
     private boolean hasGravity, hasMagnetic;
     private float declination;
     private CompassView compass;
+    private BannerAds bannerAds;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        compass = new CompassView(this);
-        setContentView(compass);
+        setContentView(R.layout.activity_main);
+        compass = findViewById(R.id.compass);
+        bannerAds = new BannerAds(this,
+                (FrameLayout) findViewById(R.id.ad_container),
+                (TextView) findViewById(R.id.ad_placeholder),
+                (TextView) findViewById(R.id.privacy_ads));
         sensors = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         locations = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         accelerometer = sensors.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensors.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if (accelerometer == null || magnetometer == null) compass.setError("Este equipo no tiene los sensores necesarios");
-        requestLocation();
-    }
-
-    private void requestLocation() {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
+        }
+    }
+
+    private void startLocationIfPermitted() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            compass.setGps(false);
             return;
         }
         try {
@@ -51,21 +60,35 @@ public final class MainActivity extends Activity implements SensorEventListener,
         } catch (SecurityException ignored) { compass.setGps(false); }
     }
 
+    private void stopLocation() {
+        try { locations.removeUpdates(this); } catch (RuntimeException ignored) { }
+    }
+
     @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(code, permissions, results);
-        if (code == LOCATION_REQUEST && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) requestLocation();
-        else compass.setGps(false);
+        if (code == LOCATION_REQUEST && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocationIfPermitted();
+        } else compass.setGps(false);
     }
 
     @Override protected void onResume() {
         super.onResume();
         if (accelerometer != null) sensors.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
         if (magnetometer != null) sensors.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_GAME);
+        startLocationIfPermitted();
+        if (bannerAds != null) bannerAds.resume();
     }
 
     @Override protected void onPause() {
         sensors.unregisterListener(this);
+        stopLocation();
+        if (bannerAds != null) bannerAds.pause();
         super.onPause();
+    }
+
+    @Override protected void onDestroy() {
+        if (bannerAds != null) bannerAds.destroy();
+        super.onDestroy();
     }
 
     @Override public void onSensorChanged(SensorEvent event) {

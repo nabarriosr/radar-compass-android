@@ -1,1 +1,4 @@
-# No custom rules required.
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.gms.**
+-dontwarn com.google.android.ump.**

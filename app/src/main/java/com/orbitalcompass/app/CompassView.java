@@ -1,4 +1,4 @@
-package com.agroaltrek.saiyancompass;
+package com.orbitalcompass.app;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,6 +10,7 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.hardware.SensorManager;
+import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.Locale;
@@ -23,7 +24,11 @@ public final class CompassView extends View {
     private String error;
 
     public CompassView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public CompassView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         p.setTypeface(android.graphics.Typeface.create("sans", android.graphics.Typeface.BOLD));
     }
 
@@ -80,14 +85,12 @@ public final class CompassView extends View {
         c.drawRect(0, 0, w, h, p);
         p.setShader(null);
 
-        // Two distant celestial bodies and soft atmospheric glow.
         p.setShader(new RadialGradient(w * .79f, h * .13f, w * .17f,
                 Color.argb(230, 255, 244, 143), Color.argb(0, 255, 244, 143), Shader.TileMode.CLAMP));
         c.drawCircle(w * .79f, h * .13f, w * .17f, p);
         p.setShader(null); p.setColor(Color.rgb(255, 246, 170)); c.drawCircle(w * .79f, h * .13f, w * .062f, p);
         p.setColor(Color.argb(150, 205, 255, 224)); c.drawCircle(w * .18f, h * .20f, w * .028f, p);
 
-        // Floating mesas and violet ridges: an original alien landscape.
         Path ridge = new Path(); ridge.moveTo(0, h * .68f);
         ridge.cubicTo(w * .12f, h * .55f, w * .22f, h * .64f, w * .33f, h * .51f);
         ridge.cubicTo(w * .49f, h * .68f, w * .64f, h * .50f, w * .78f, h * .61f);
